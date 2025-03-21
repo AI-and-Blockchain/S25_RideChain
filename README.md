@@ -10,7 +10,7 @@ This project aims to develop a decentralized rideshare smart contract which leve
 
 The demo for this project would be both driver and user endpoint interactions.
 
-For the driver, we could show an end-to-end process for how a driver could register and become a driver on the platform, obtaining the DID and token, and responding to rider requests. 
+For the driver, we could show an end-to-end process for how a driver could register and become a driver on the platform, obtaining a validation token after performing the ZKP interaction, and responding to rider requests, destination confirmations and such. 
 
 For the rider, we could show the process of how a user registers, sets up a route, selects a driver, confirms departure and arrival, and finally uploads the payment and any reviews.  
 We would also display the AI model in action updating driver scores based on ride quality.
@@ -20,10 +20,13 @@ We would also display the AI model in action updating driver scores based on rid
 ## End-users and Expected Outcomes
 
 ### Drivers
-- Can register to be a driver  
-- Need to submit data for background check that an oracle completes  
-- Can set rates for rides they see available but rider chooses driver  
-- Driver class has a score field updated by an external AI using review and ride data  
+- Can register to be a driver.
+- Must prove their identity and background check using Zero-Knowledge Proofs (ZKPs) instead of submitting raw data to a centralized oracle.
+- The driver generates a ZK proof that verifies they meet platform requirements (e.g., clean background, valid license) without revealing personal data.
+  - The ZK Identity System verifies the proof and returns a validation result to the smart contract, confirming the driver's eligibility.
+- Can set rates for available ride requests, but the rider selects the driver.
+- Each driver has a score field that is updated by an external AI model based on ride quality, reviews, and historical performance.
+  - The AI model is trained using data from Kaggle’s Uber dataset to ensure fair and accurate scoring based on a large quantity of real historical data
 
 ### Riders
 - Can register to be a rider on the app  

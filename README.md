@@ -25,10 +25,12 @@ Together, drivers and riders create a trustless, efficient, and incentive-aligne
 
 ## Component Diagram
 <img width="979" alt="Screenshot 2025-03-25 at 12 09 12 PM" src="https://github.com/user-attachments/assets/e9da7250-8fcd-4b33-985d-71f7eeafea1a" />
+
 ---
 
 ## Sequence Diagram
 <img width="615" alt="Screenshot 2025-03-25 at 12 07 55 PM" src="https://github.com/user-attachments/assets/2b45d3f0-acf2-40d1-9c76-5adf92347142" />
+
 ---
 
 ## Project Outcomes
@@ -46,3 +48,19 @@ Transparent Marketplace for Rides: By enabling drivers to set their own pricing 
 Increased Accessibility and Equity: RideChain empowers both riders and drivers by eliminating platform-driven gatekeeping and algorithmic opacity. It enables participation in a decentralized ecosystem where users maintain control over their data, payments, and service terms.
 
 In conclusion, RideChain delivers a secure, fair, and scalable alternative to centralized rideshare apps. It is expected to foster a transparent and user-first mobility economy—one where privacy, trust, and choice are fundamental pillars of the experience.
+
+---
+
+## Check 2
+
+High-level description and rationale for the AI algorithms/models that will
+be used:
+
+The AI model in RideChain is used to score drivers based on how well they complete rides. It looks at data like trip time, cancellations, and rider reviews to update each driver's rating. The model is trained on real Uber ride data from Kaggle to make sure the scoring is fair and accurate. This helps riders choose good drivers and keeps the platform reliable. The AI runs off-chain and sends updated scores to the smart contract so the system stays efficient and secure.
+
+High-level description and rationale for the blockchain architecture that will
+be used:
+
+RideChain uses blockchain to remove the need for a central company and make ride and payment activity transparent and secure. Smart contracts handle rider and driver registration, ride requests, pricing, payments, and rating updates. To protect user privacy, drivers use Zero-Knowledge Proofs (ZKPs) to prove they passed a background check without sharing personal data. All actions are recorded on-chain so users can trust the system without needing a third party. The blockchain also connects to off-chain services like the mobile oracle and AI model to confirm ride completion and update scores. This setup ensures fairness, privacy, and automation across the platform.
+
+

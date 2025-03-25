@@ -23,7 +23,7 @@ Together, drivers and riders create a trustless, efficient, and incentive-aligne
 
 ---
 
-## Class Diagram
+## Component Diagram
 <img width="979" alt="Screenshot 2025-03-25 at 12 09 12 PM" src="https://github.com/user-attachments/assets/e9da7250-8fcd-4b33-985d-71f7eeafea1a" />
 ---
 

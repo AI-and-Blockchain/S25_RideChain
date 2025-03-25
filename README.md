@@ -1,64 +1,48 @@
-# RideChain: Decentralized Rideshare with AI-Enhanced Safety and Ratings
+# RideChain
 
-## Introduction
+RideChain is a decentralized rideshare platform that challenges the status quo of centralized mobility services by introducing a transparent, trustless, and cost-efficient alternative. Leveraging blockchain smart contracts, AI-driven driver scoring, and privacy-preserving identity verification through Zero-Knowledge Proofs (ZKPs), RideChain empowers riders and drivers to interact directly—with higher earnings for drivers, lower costs for riders, and no central authority.
 
-This project aims to develop a decentralized rideshare smart contract which leverages AI in its safety and driver ratings in order to move the rideshare industry out of centralized control. The benefits of this project are higher wages for drivers and lower cost for riders as the removal of centralized control reduces the profits taken out of drivers wages and high costs leveraged on riders. We plan to introduce a smart contract that allows riders to request a ride with the start and end location and other information such as vehicle size, passenger numbers, etc. Once a request is made, matched drivers in the area can accept the ride and propose their price. A rider can then accept the best fare offered. Using the power of a mobile oracle with access to location services, the smart contract will evaluate the promise that the driver successfully drove the rider to their destination. Lastly, in order to maintain the security and reliability of this project, we plan to implement background check technology to ensure drivers and riders are trusted.
-
----
-
-## What would be the “Demo” of the project?
-
-The demo for this project would be both driver and user endpoint interactions.
-
-For the driver, we could show an end-to-end process for how a driver could register and become a driver on the platform, obtaining a validation token after performing the ZKP interaction, and responding to rider requests, destination confirmations and such. 
-
-For the rider, we could show the process of how a user registers, sets up a route, selects a driver, confirms departure and arrival, and finally uploads the payment and any reviews.  
-We would also display the AI model in action updating driver scores based on ride quality.
+The system centers around three core innovations:
+- A smart contract-based ride request and fulfillment protocol.
+- ZK Identity verification for background-checked driver registration.
+- AI-enhanced reputation scoring based on real ride data and user feedback.
 
 ---
 
-## End-users and Expected Outcomes
+## Demo/Stakeholders
 
-### Drivers
-- Can register to be a driver.
-- Must prove their identity and background check using Zero-Knowledge Proofs (ZKPs) instead of submitting raw data to a centralized oracle.
-- The driver generates a ZK proof that verifies they meet platform requirements (e.g., clean background, valid license) without revealing personal data.
-  - The ZK Identity System verifies the proof and returns a validation result to the smart contract, confirming the driver's eligibility.
-- Can set rates for available ride requests, but the rider selects the driver.
-- Each driver has a score field that is updated by an external AI model based on ride quality, reviews, and historical performance.
-  - The AI model is trained using data from Kaggle’s Uber dataset to ensure fair and accurate scoring based on a large quantity of real historical data
+The RideChain platform involves two primary end-user groups—Drivers and Riders—each playing a critical role in the decentralized rideshare ecosystem. The project demo will showcase both perspectives, highlighting the registration process, smart contract interactions, and the AI-enhanced rating system in action.
 
-### Riders
-- Can register to be a rider on the app  
-- Can send requests for rides  
-- Can select any accepted request based on the price offered by the driver  
+Driver:
+Drivers are independent service providers who wish to earn income by offering transportation services through the RideChain platform. To ensure trust and safety, drivers must first register and submit background verification data, which is validated through a Zero-Knowledge Proof system without exposing sensitive personal information. Once approved, drivers can view open ride requests in their area and propose custom pricing for each ride. The smart contract handles all interactions transparently, and payment is automatically released upon ride completion, as verified by a mobile oracle. Additionally, each driver's score is continuously updated by an AI model trained on real-world Uber ride data, factoring in feedback and performance to promote high-quality service providers.
+
+Rider:
+Riders are individuals looking for reliable and cost-effective transportation. After registering on the platform, riders can submit a ride request by specifying their start and end locations, preferred vehicle size, and number of passengers. Once the request is live, nearby drivers respond with price offers. Riders can then browse these proposals and select the one that best matches their preferences in terms of cost and driver score. Throughout the ride, the mobile oracle tracks trip progress, ensuring that pickup and drop-off are completed as promised. Upon successful completion, payment is processed via smart contract and the rider may leave a review, contributing to the driver's AI-updated reputation.
+
+Together, drivers and riders create a trustless, efficient, and incentive-aligned system. The demo will walk through the end-to-end user flows for both stakeholders, including smart contract registrations, offer selection, ride tracking, payment disbursement, and AI-based score updates—all without reliance on a centralized authority.
 
 ---
 
-## Responsibilities of each of the team members
-
-- **Faizaan:** Work on the smart contract code for handling background checks via an Oracle  
-- **Jordon:** Work on the smart contract code for handling user ride requests and drivers accepting said requests. Potentially work on a mobile device oracle that uses location services to ensure the ride was completed as promised by both parties.  
-- **Samir:** Work on training and integrating the AI model using scraped Uber review datasets  
-
-We may rotate around roles once we have a better idea of the tasks at hand. Working together on some portions will also be beneficial in some cases.
-
+## Class Diagram
+<img width="979" alt="Screenshot 2025-03-25 at 12 09 12 PM" src="https://github.com/user-attachments/assets/e9da7250-8fcd-4b33-985d-71f7eeafea1a" />
 ---
 
-## How the team members coordinate to work on the project
-
-We will be working on this project Wednesdays and weekends when we all have the most free time. We will use Discord for group calls and meet at the RPI Union when necessary, aiming for at least once a week on Wednesdays.
-
+## Sequence Diagram
+<img width="615" alt="Screenshot 2025-03-25 at 12 07 55 PM" src="https://github.com/user-attachments/assets/2b45d3f0-acf2-40d1-9c76-5adf92347142" />
 ---
 
-## Asynchronous communication channel (Discord/Webex)
+## Project Outcomes
 
-We are pretty good about calling and texting as our main source of communication. We also may use Discord or Webex if we need to live share code or something along those lines.
+Decentralized Rideshare Protocol: The primary outcome of this project is a fully decentralized rideshare platform that removes reliance on centralized intermediaries like Uber and Lyft. By utilizing blockchain-based smart contracts, RideChain ensures transparent, tamper-proof coordination between riders and drivers, reducing platform fees and redistributing value more fairly.
 
----
+Privacy-Preserving Identity Verification: Through the integration of Zero-Knowledge Proofs (ZKPs), the platform provides a secure identity verification mechanism that protects sensitive driver information while ensuring background check compliance. This encourages trust without compromising user privacy.
 
-## Notes:
+AI-Driven Reputation System: A key innovation of RideChain is its integration of an AI model trained on real-world rideshare data to dynamically evaluate and update driver scores. This system enhances service quality by prioritizing reliable drivers, and ensures reputation is earned fairly through objective performance data and rider reviews.
 
-(Add any additional notes or considerations here.)
+Smart Oracle-Based Ride Verification: The mobile oracle acts as a decentralized verifier, confirming the location-based completion of rides. This feature ensures riders only pay for completed services and drivers are automatically compensated upon ride fulfillment, all without a human middleman.
 
----
+Transparent Marketplace for Rides: By enabling drivers to set their own pricing and allowing riders to choose from multiple offers, the system creates a competitive and efficient marketplace. This model supports better resource allocation and price discovery while maintaining trust through verified reputations and transparent transactions.
+
+Increased Accessibility and Equity: RideChain empowers both riders and drivers by eliminating platform-driven gatekeeping and algorithmic opacity. It enables participation in a decentralized ecosystem where users maintain control over their data, payments, and service terms.
+
+In conclusion, RideChain delivers a secure, fair, and scalable alternative to centralized rideshare apps. It is expected to foster a transparent and user-first mobility economy—one where privacy, trust, and choice are fundamental pillars of the experience.

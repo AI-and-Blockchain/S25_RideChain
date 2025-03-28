@@ -23,16 +23,6 @@ Together, drivers and riders create a trustless, efficient, and incentive-aligne
 
 ---
 
-## Component Diagram
-<img width="979" alt="Screenshot 2025-03-25 at 12 09 12 PM" src="https://github.com/user-attachments/assets/e9da7250-8fcd-4b33-985d-71f7eeafea1a" />
-
----
-
-## Sequence Diagram
-<img width="615" alt="Screenshot 2025-03-25 at 12 07 55 PM" src="https://github.com/user-attachments/assets/2b45d3f0-acf2-40d1-9c76-5adf92347142" />
-
----
-
 ## Project Outcomes
 
 Decentralized Rideshare Protocol: The primary outcome of this project is a fully decentralized rideshare platform that removes reliance on centralized intermediaries like Uber and Lyft. By utilizing blockchain-based smart contracts, RideChain ensures transparent, tamper-proof coordination between riders and drivers, reducing platform fees and redistributing value more fairly.

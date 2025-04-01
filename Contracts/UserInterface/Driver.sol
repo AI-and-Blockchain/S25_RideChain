@@ -3,6 +3,7 @@ pragma solidity ^0.8.19;
 
 contract DriverContract {
     address public owner;
+    uint256 collateral;
 
     struct Driver {
         address driverAddress;
@@ -28,11 +29,12 @@ contract DriverContract {
         _;
     }
 
-    constructor() {
+    constructor(uint256 collat) {
         owner = msg.sender;
+        collateral = collat;
     }
 
-    function registerAsDriver(uint256 collateral) external payable {
+    function registerAsDriver() external payable {
         require(!drivers[msg.sender].registered, "Already registered");
         require(msg.value >= collateral, "Insufficient collateral");
 

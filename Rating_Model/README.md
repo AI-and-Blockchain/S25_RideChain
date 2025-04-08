@@ -79,7 +79,7 @@ driver-rating-project/
 
 ---
 
-### ▶️ Running the Notebook
+### Running the Notebook
 
 Once the dataset is in place, run:
 
@@ -115,7 +115,7 @@ The notebook will walk through data preprocessing, feature generation, driver la
 
 ---
 
-## 📄 License
+## License
 
 MIT License
 

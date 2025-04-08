@@ -6,6 +6,7 @@ contract RideRequestContract {
         address rider;
         string start;
         string end;
+        string startDate, 
         string preferences;
         bool accepted;
         address selectedDriver;
@@ -45,6 +46,7 @@ contract RideRequestContract {
     function initiateRideRequest(
         string calldata start,
         string calldata end,
+        string calldata startDate,
         string calldata preferences
     ) external returns (uint256 rideId) {
         rideId = rideCounter++;
@@ -52,6 +54,7 @@ contract RideRequestContract {
             rider: msg.sender,
             start: start,
             end: end,
+            startDate: startDate,
             preferences: preferences,
             accepted: false,
             selectedDriver: address(0),
@@ -64,6 +67,11 @@ contract RideRequestContract {
         require(rideId < rideCounter, "Invalid ride ID");
         rideProposals[rideId].push(RideProposal({driver: msg.sender, price: price}));
         emit ProposalSubmitted(rideId, msg.sender, price);
+    }
+
+    function getRideProposals(uint256 rideId) external view returns (RideProposal[] memory) {
+        require(rideId < rideCounter, "Invalid ride ID");
+        return rideProposals[rideId];
     }
 
     function finalizeRideSelection(uint256 rideId, address driver, uint256 paymentAmount) external payable {

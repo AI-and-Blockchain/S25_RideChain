@@ -27,6 +27,7 @@ interface IRideRequestContract {
 contract RiderContract {
     address public owner;
     IRiderRegistration public registration;
+    IRideRequestContract public request;
 
     struct RideOffer {
         address driver;
@@ -53,9 +54,10 @@ contract RiderContract {
     }
 
     //RegistractionAddress contract needed to interface with it
-    constructor(address registrationAddress) {
+    constructor(address registrationAddress, address requestAddress) {
         owner = msg.sender;
         registration = IRiderRegistration(registrationAddress);
+        request = IRideRequest(requestAddress);
     }
 
     function registerAsRider() external {

@@ -1,0 +1,17 @@
+TO DO LIST:
+
+Smart Contract Component:
+- Currently, the only file that needs to be tweaked is the ride_registration contract.
+- Ride registration structs and data need to be moved and stored in this contract. Only allowed contracts should be allowed to interface with ride_registration.
+- All other files that did the tasks of this contract now need to interface with it accordingly with the sequence and component diagram.
+
+- Link up smart contracts and test on forge.
+
+
+
+AI Component:
+
+
+
+Mobile Oracle Component:
+- Research and start finding a way to do this. Get it implemented and interfaced with by the end of the project.

@@ -82,22 +82,26 @@ contract RiderContract {
         emit RideOfferReceived(rider, driver, price);
     }
 
-    //Maybe UPDATE
-    function selectBestOffer() external onlyRegisteredRider {
-        require(rideOffers[msg.sender].length > 0, "No ride offers available");
-
+    function selectBestOffer(uint256 rideId) external onlyRegisteredRider {
+        RideRequestContract.RideProposal[] memory proposals = rideRequestContract.getRideProposals(rideId);
+        require(proposals.length > 0, "No ride proposals available");
+    
         uint256 bestIndex = 0;
-        uint256 bestPrice = rideOffers[msg.sender][0].price;
-
-        for (uint256 i = 1; i < rideOffers[msg.sender].length; i++) {
-            if (rideOffers[msg.sender][i].price < bestPrice) {
-                bestPrice = rideOffers[msg.sender][i].price;
+        uint256 bestPrice = proposals[0].price;
+    
+        for (uint256 i = 1; i < proposals.length; i++) {
+            if (proposals[i].price < bestPrice) {
+                bestPrice = proposals[i].price;
                 bestIndex = i;
             }
         }
-
-        rideOffers[msg.sender][bestIndex].accepted = true;
-        emit RideOfferAccepted(msg.sender, rideOffers[msg.sender][bestIndex].driver, bestPrice);
+    
+        address selectedDriver = proposals[bestIndex].driver;
+    
+        // Call finalizeRideSelection on RideRequestContract
+        rideRequestContract.finalizeRideSelection{value: bestPrice}(rideId, selectedDriver, bestPrice);
+    
+        emit RideOfferAccepted(msg.sender, selectedDriver, bestPrice);
     }
 
     //UPDATE: to submitPayment to the riderequest contract

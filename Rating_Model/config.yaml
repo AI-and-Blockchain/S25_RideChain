@@ -1,0 +1,4 @@
+data_paths:
+  driver_ids: Data/driver_ids.csv
+  ride_ids: Data/ride_ids.csv
+  ride_timestamps: Data/ride_timestamps.csv

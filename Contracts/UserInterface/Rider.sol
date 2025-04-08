@@ -13,6 +13,17 @@ interface IRiderRegistration {
     function incrementRiderCount(address rider) external;
 }
 
+interface IRideRequestContract {
+    function initiateRideRequest(
+        string calldata start,
+        string calldata end,
+        string calldata preferences
+    ) external returns (uint256 rideId);
+    function finalizeRideSelection(uint256 rideId, address driver, uint256 paymentAmount) external payable;
+    function confirmDeparture(uint256 rideId) external;
+    function sendReview(uint256 rideId, string calldata feedback) external;
+}
+
 contract RiderContract {
     address public owner;
     IRiderRegistration public registration;

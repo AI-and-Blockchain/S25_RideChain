@@ -14,6 +14,10 @@ interface IRiderRegistration {
 }
 
 interface IRideRequestContract {
+    struct RideProposal {
+        address driver;
+        uint256 price;
+    }
     function initiateRideRequest(
         string calldata start,
         string calldata end,
@@ -23,6 +27,7 @@ interface IRideRequestContract {
     function finalizeRideSelection(uint256 rideId, address driver, uint256 paymentAmount) external payable;
     function confirmDeparture(uint256 rideId) external;
     function sendReview(uint256 rideId, string calldata feedback) external;
+    function getRideProposals(uint256 rideId) external view returns (RideProposal[] memory);
 }
 
 contract RiderContract {
@@ -31,7 +36,7 @@ contract RiderContract {
     IRideRequestContract public request;
 
     event RiderRegistered(address indexed rider);
-    event RideRequested(address indexed rider, string startLocation, string endLocation, string preferences);
+    event RideRequested(address indexed rider, string startLocation, string endLocation, string startTime, string preferences);
     event RideOfferReceived(address indexed rider, address indexed driver, uint256 price);
     event RideOfferAccepted(address indexed rider, address indexed driver, uint256 price);
     event PaymentSubmitted(address indexed rider, uint256 amount);
@@ -50,7 +55,7 @@ contract RiderContract {
     constructor(address registrationAddress, address requestAddress) {
         owner = msg.sender;
         registration = IRiderRegistration(registrationAddress);
-        request = IRideRequest(requestAddress);
+        request = IRideRequestContract(requestAddress);
     }
 
     function registerAsRider() external {
@@ -83,7 +88,7 @@ contract RiderContract {
     }
 
     function selectBestOffer(uint256 rideId) external onlyRegisteredRider {
-        RideRequestContract.RideProposal[] memory proposals = rideRequestContract.getRideProposals(rideId);
+        request.RideProposal[] memory proposals = request.getRideProposals(rideId);
         require(proposals.length > 0, "No ride proposals available");
     
         uint256 bestIndex = 0;
@@ -99,7 +104,7 @@ contract RiderContract {
         address selectedDriver = proposals[bestIndex].driver;
     
         // Call finalizeRideSelection on RideRequestContract
-        rideRequestContract.finalizeRideSelection{value: bestPrice}(rideId, selectedDriver, bestPrice);
+        request.finalizeRideSelection{value: bestPrice}(rideId, selectedDriver, bestPrice);
     
         emit RideOfferAccepted(msg.sender, selectedDriver, bestPrice);
     }

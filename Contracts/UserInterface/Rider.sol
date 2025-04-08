@@ -17,6 +17,7 @@ interface IRideRequestContract {
     function initiateRideRequest(
         string calldata start,
         string calldata end,
+        string calldata startDate,
         string calldata preferences
     ) external returns (uint256 rideId);
     function finalizeRideSelection(uint256 rideId, address driver, uint256 paymentAmount) external payable;
@@ -28,14 +29,6 @@ contract RiderContract {
     address public owner;
     IRiderRegistration public registration;
     IRideRequestContract public request;
-
-    struct RideOffer {
-        address driver;
-        uint256 price;
-        bool accepted;
-    }
-
-    mapping(address => RideOffer[]) public rideOffers;
 
     event RiderRegistered(address indexed rider);
     event RideRequested(address indexed rider, string startLocation, string endLocation, string preferences);
@@ -77,21 +70,16 @@ contract RiderContract {
     }
 
     //UPDATE
-    function requestRide(string calldata startLocation, string calldata endLocation, string calldata preferences) 
+    function requestRide(string calldata startLocation, string calldata endLocation, string calldata startTime, string calldata preferences) 
         external onlyRegisteredRider 
     {
-        emit RideRequested(msg.sender, startLocation, endLocation, preferences);
+        emit RideRequested(msg.sender, startLocation, endLocation, startTime, preferences);
+        request.initiateRideRequest(startLocation, endLocation, startTime, preferences);
     }
 
     //UPDATE
-    function receiveRideOffer(address driver, uint256 price) external {
-        rideOffers[msg.sender].push(RideOffer({
-            driver: driver,
-            price: price,
-            accepted: false
-        }));
-
-        emit RideOfferReceived(msg.sender, driver, price);
+    function receiveRideOffer(address rider, address driver, uint256 price) external {
+        emit RideOfferReceived(rider, driver, price);
     }
 
     //Maybe UPDATE
@@ -130,4 +118,13 @@ contract RiderContract {
     function updateRegistrationAddress(address newAddress) external onlyOwner {
         registration = IRiderRegistration(newAddress);
     }
+
+    function confirmDeparture() {
+        
+    }
+
+    function confirmArrival() {
+
+    }
+
 }

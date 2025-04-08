@@ -1,14 +1,21 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
+//interface to RiderRegistrationContract
+interface IRiderRegistration {
+    function handleRiderRegistration(address rider) external;
+    function isRiderRegistered(address rider) external view returns (bool);
+    function getRiderData(address rider) external view returns (
+        address riderAddress,
+        bool registered,
+        uint256 rideCount
+    );
+    function incrementRiderCount(address rider) external;
+}
+
 contract RiderContract {
     address public owner;
-
-    struct Rider {
-        address riderAddress;
-        bool registered;
-        uint256 rideCount;
-    }
+    IRiderRegistration public registration;
 
     struct RideOffer {
         address driver;
@@ -16,8 +23,7 @@ contract RiderContract {
         bool accepted;
     }
 
-    mapping(address => Rider) public riders;
-    mapping(address => RideOffer[]) public rideOffers; // Stores ride offers for each rider
+    mapping(address => RideOffer[]) public rideOffers;
 
     event RiderRegistered(address indexed rider);
     event RideRequested(address indexed rider, string startLocation, string endLocation, string preferences);
@@ -31,32 +37,40 @@ contract RiderContract {
     }
 
     modifier onlyRegisteredRider() {
-        require(riders[msg.sender].registered, "Rider not registered");
+        require(registration.isRiderRegistered(msg.sender), "Rider not registered");
         _;
     }
 
-    constructor() {
+    //RegistractionAddress contract needed to interface with it
+    constructor(address registrationAddress) {
         owner = msg.sender;
+        registration = IRiderRegistration(registrationAddress);
     }
 
     function registerAsRider() external {
-        require(!riders[msg.sender].registered, "Already registered");
+        require(!registration.isRiderRegistered(msg.sender), "Already registered");
 
-        riders[msg.sender] = Rider({
-            riderAddress: msg.sender,
-            registered: true,
-            rideCount: 0
-        });
-
+        registration.handleRiderRegistration(msg.sender);
         emit RiderRegistered(msg.sender);
     }
 
+    //Quickly view riders data stored
+    function viewMyRiderData() external view returns (
+        address riderAddress,
+        bool registered,
+        uint256 rideCount
+    ) {
+        return registration.getRiderData(msg.sender);
+    }
+
+    //UPDATE
     function requestRide(string calldata startLocation, string calldata endLocation, string calldata preferences) 
         external onlyRegisteredRider 
     {
         emit RideRequested(msg.sender, startLocation, endLocation, preferences);
     }
 
+    //UPDATE
     function receiveRideOffer(address driver, uint256 price) external {
         rideOffers[msg.sender].push(RideOffer({
             driver: driver,
@@ -67,6 +81,7 @@ contract RiderContract {
         emit RideOfferReceived(msg.sender, driver, price);
     }
 
+    //Maybe UPDATE
     function selectBestOffer() external onlyRegisteredRider {
         require(rideOffers[msg.sender].length > 0, "No ride offers available");
 
@@ -84,14 +99,22 @@ contract RiderContract {
         emit RideOfferAccepted(msg.sender, rideOffers[msg.sender][bestIndex].driver, bestPrice);
     }
 
+    //UPDATE: to submitPayment to the riderequest contract
     function submitPayment(uint256 amount) external payable onlyRegisteredRider {
         require(msg.value == amount, "Incorrect payment amount");
 
         emit PaymentSubmitted(msg.sender, amount);
     }
 
+    //UPDATE: Interface elsewhere
     function incrementRideCount(address riderAddress) external onlyOwner {
-        require(riders[riderAddress].registered, "Rider not registered");
-        riders[riderAddress].rideCount++;
+        require(registration.isRiderRegistered(riderAddress), "Rider not registered");
+        registration.incrementRiderCount(riderAddress);
+    }
+    
+
+    //Change contract address
+    function updateRegistrationAddress(address newAddress) external onlyOwner {
+        registration = IRiderRegistration(newAddress);
     }
 }

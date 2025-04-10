@@ -5,6 +5,11 @@ interface IAIRatingOracleContract {
     function updateDriverScore(address driver, uint256 newScore) external;
 }
 
+interface IRegistrationContract {
+    function incrementDriverCount(address driver) external;
+}
+
+
 contract RideRequestContract {
     struct RideRequest {
         address rider;
@@ -36,6 +41,7 @@ contract RideRequestContract {
 
     address public mobileOracle;
     IAIRatingOracleContract public aiRatingOracle;
+    IRegistrationContract public register;
     address public owner;
 
     uint256 public rideCounter;
@@ -56,10 +62,11 @@ contract RideRequestContract {
         _;
     }
 
-    constructor(address _mobileOracle, address _aiRatingOracle) {
+    constructor(address _mobileOracle, address _aiRatingOracle, address registrationContract) {
         owner = msg.sender;
         mobileOracle = _mobileOracle;
         aiRatingOracle = IAIRatingOracleContract(_aiRatingOracle);
+        register = IRegistrationContract(registrationContract);
     }
 
     //Only the ownder and add or remove callers to this internal smart contract
@@ -161,6 +168,7 @@ contract RideRequestContract {
         request.status = "arrived";
 
         payable(request.selectedDriver).transfer(request.paymentAmount);
+        register.incrementDriverCount(request.selectedDriver);
         emit PaymentTransferred(rideId, request.selectedDriver);
     }
 

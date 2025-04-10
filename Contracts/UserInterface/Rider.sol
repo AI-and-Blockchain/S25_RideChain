@@ -88,7 +88,7 @@ contract RiderContract {
         emit RideOfferReceived(rider, driver, price);
     }
 
-    function selectBestOffer(uint256 rideId) external onlyRegisteredRider {
+    function selectBestOffer(uint256 rideId) external payable onlyRegisteredRider {
         IRideRequestContract.RideProposal[] memory proposals = request.getRideProposals(rideId);
         require(proposals.length > 0, "No ride proposals available");
     
@@ -105,7 +105,7 @@ contract RiderContract {
         address selectedDriver = proposals[bestIndex].driver;
     
         // Call finalizeRideSelection on RideRequestContract
-        request.finalizeRideSelection(rideId, selectedDriver);
+        request.finalizeRideSelection{value: msg.value}(rideId, selectedDriver);
     
         emit RideOfferAccepted(msg.sender, selectedDriver, bestPrice);
     }

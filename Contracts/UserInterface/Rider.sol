@@ -88,7 +88,7 @@ contract RiderContract {
     }
 
     function selectBestOffer(uint256 rideId) external onlyRegisteredRider {
-        request.RideProposal[] memory proposals = request.getRideProposals(rideId);
+        IRideRequestContract.RideProposal[] memory proposals = request.getRideProposals(rideId);
         require(proposals.length > 0, "No ride proposals available");
     
         uint256 bestIndex = 0;

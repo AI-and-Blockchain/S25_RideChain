@@ -6,7 +6,7 @@ contract RideRequestContract {
         address rider;
         string start;
         string end;
-        string startDate, 
+        string startDate; 
         string preferences;
         bool accepted;
         address selectedDriver;

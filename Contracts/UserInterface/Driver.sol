@@ -17,9 +17,29 @@ interface IRegistrationContract {
     function withdrawCollateral(address driver) external;
 }
 
+interface IRideRequestContract {
+    struct RideProposal {
+        address driver;
+        uint256 price;
+    }
+    function initiateRideRequest(
+        string calldata start,
+        string calldata end,
+        string calldata startDate,
+        string calldata preferences
+    ) external returns (uint256 rideId);
+    function finalizeRideSelection(uint256 rideId, address driver, uint256 paymentAmount) external payable;
+    function confirmDeparture(uint256 rideId) external;
+    function confirmArrival(uint256 rideId) external;
+    function sendReview(uint256 rideId, string calldata feedback) external;
+    function submitRideProposal(uint256 rideId, uint256 price) external;
+    function getRideProposals(uint256 rideId) external view returns (RideProposal[] memory);
+}
+
 contract DriverContract {
     address public owner;
     IRegistrationContract public registration;
+    IRideRequestContract public request;
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Not the owner");
@@ -36,9 +56,10 @@ contract DriverContract {
     event RideProposalSubmitted(address indexed driver, uint256 price, uint256 ride_id);
     event FundsWithdrawn(address indexed driver);
 
-    constructor(address registrationAddress) {
+    constructor(address registrationAddress, address requestAddress) {
         owner = msg.sender;
         registration = IRegistrationContract(registrationAddress);
+        request = IRideRequestContract(requestAddress);
     }
 
     receive() external payable {
@@ -63,6 +84,7 @@ contract DriverContract {
 
     function proposeRidePrice(uint256 ride_id, uint256 price) external {
         emit RideProposalSubmitted(msg.sender, price, ride_id);
+        request.submitRideProposal(ride_id, price);
     }
 
     function withdrawRequest() external onlyRegisteredDriver {
@@ -77,5 +99,13 @@ contract DriverContract {
 
     function updateRegistrationAddress(address newAddress) external onlyOwner {
         registration = IRegistrationContract(newAddress);
+    }
+
+    function confirmDeparture(uint256 rideId) external {
+        request.confirmDeparture(rideId);
+    }
+
+    function confirmArrival(uint256 rideId) external {
+        request.confirmArrival(rideId);
     }
 }

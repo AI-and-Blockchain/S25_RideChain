@@ -17,6 +17,12 @@ contract AIRatingOracleContract {
     address public owner;
     IDriverRegistration public registration;
 
+    mapping(address => bool) public allowedCallers;
+    modifier onlyAllowedCaller() {
+        require(allowedCallers[msg.sender], "Not authorized");
+        _;
+    }
+
     modifier onlyOwner() {
         require(msg.sender == owner, "Not authorized");
         _;
@@ -27,13 +33,28 @@ contract AIRatingOracleContract {
         registration = IDriverRegistration(registrationAddress);
     }
 
+    //Only the ownder and add or remove callers to this internal smart contract
+    function addAllowedCaller(address caller) external onlyOwner {
+        allowedCallers[caller] = true;
+    }
+
+    function removeAllowedCaller(address caller) external onlyOwner {
+        allowedCallers[caller] = false;
+    }
+
+    //Transfer owner can only be done by the owner!
+    function transferOwnership(address newOwner) external onlyOwner {
+        require(newOwner != address(0), "New owner is the zero address");
+        owner = newOwner;
+    }
+
     //Updates the driver score in the registration contract
-    function updateDriverScore(address driver, uint256 newScore) external onlyOwner {
+    function updateDriverScore(address driver, uint256 newScore) external onlyAllowedCaller {
         registration.updateDriverScore(driver, newScore);
     }
 
     //This function gets the driver's score from the registration contract
-    function getDriverScore(address driver) external view returns (uint256) {
+    function getDriverScore(address driver) external view onlyAllowedCaller returns (uint256) {
         (, , uint256 rating, , ) = registration.getDriverData(driver);  //Fetch driver data
         return rating;  //Return the rating score
     }

@@ -88,8 +88,8 @@ contract RegistrationContract {
         drivers[driver] = Driver({
             driverAddress: driver,
             collateral: msg.value,
-            rating: 0,
-            rideCount: 0,
+            rating: 5,
+            rideCount: 10,
             registered: true
         });
         emit DriverRegistered(driver, msg.value);

@@ -7,7 +7,7 @@ interface IAIRatingOracleContract {
 
 interface IRegistrationContract {
     function incrementDriverCount(address driver) external;
-    function recieveRidePayment(address rider, address driver, uint256 payment) external payable;
+    function receiveRidePayment(address rider, address driver, uint256 payment) external payable;
 }
 
 
@@ -86,6 +86,7 @@ contract RideRequestContract {
     }
 
     function initiateRideRequest(
+        address rider,
         string calldata start,
         string calldata end,
         string calldata startDate,
@@ -93,7 +94,7 @@ contract RideRequestContract {
     ) external onlyAllowedCaller returns (uint256 rideId) {
         rideId = rideCounter++;
         rideRequests[rideId] = RideRequest({
-            rider: msg.sender,
+            rider: rider,
             start: start,
             end: end,
             startDate: startDate,
@@ -106,14 +107,14 @@ contract RideRequestContract {
         emit RideRequested(rideId, msg.sender);
     }
 
-    function submitRideProposal(uint256 rideId, uint256 price) external onlyAllowedCaller{
+    function submitRideProposal(address driver, uint256 rideId, uint256 price) external onlyAllowedCaller{
         require(rideId < rideCounter, "Invalid ride ID");
         require(!hasProposed[rideId][msg.sender], "Proposal already submitted for this ride");
 
-        rideProposals[rideId].push(RideProposal({driver: msg.sender, price: price}));
-        hasProposed[rideId][msg.sender] = true;
+        rideProposals[rideId].push(RideProposal({driver: driver, price: price}));
+        hasProposed[rideId][driver] = true;
 
-        emit ProposalSubmitted(rideId, msg.sender, price);
+        emit ProposalSubmitted(rideId, driver, price);
     }
 
     function getRideProposals(uint256 rideId) external view onlyAllowedCaller returns (RideProposal[] memory) {
@@ -121,9 +122,9 @@ contract RideRequestContract {
         return rideProposals[rideId];
     }
 
-    function finalizeRideSelection(uint256 rideId, address driver) external payable onlyAllowedCaller {
+    function finalizeRideSelection(address rider, uint256 rideId, address driver) external payable onlyAllowedCaller {
         RideRequest storage request = rideRequests[rideId];
-        require(msg.sender == request.rider, "Only rider can select");
+        require(rider == request.rider, "Rider is not the same!");
         require(!request.accepted, "Ride already accepted");
 
         // Check if the driver has submitted a proposal and retrieve the price
@@ -153,7 +154,7 @@ contract RideRequestContract {
 
     function confirmDeparture(uint256 rideId) external onlyAllowedCaller {
         RideRequest storage request = rideRequests[rideId];
-        require(msg.sender == request.rider, "Only rider can confirm departure");
+        //require(msg.sender == request.rider, "Only rider can confirm departure");
         require(keccak256(abi.encodePacked(request.status)) == keccak256(abi.encodePacked("accepted")), "Ride must be accepted to confirm departure");
         //Right now calling this method makes the request departed
         request.status = "departed";
@@ -166,28 +167,35 @@ contract RideRequestContract {
         require(request.accepted, "Ride not accepted");
         require(keccak256(abi.encodePacked(request.status)) == keccak256(abi.encodePacked("departed")), "Ride must be departed to confirm departure");
         
+        require(address(this).balance >= request.paymentAmount, "Contract doesn't hold enough ETH");
+
         request.status = "arrived";
+        uint256 amount = request.paymentAmount;
 
-        // Send ETH to the register contract with the function call
-        (bool sent, ) = payable(address(register)).call{value: request.paymentAmount}(
-            abi.encodeWithSignature(
-                "recieveRidePayment(address,address,uint256)",
-                request.rider,
-                request.selectedDriver,
-                request.paymentAmount
-            )
-        );
-        require(sent, "Payment transfer failed");
-
+        try register.receiveRidePayment{value: request.paymentAmount}(
+            request.rider,
+            request.selectedDriver,
+            amount
+        ) {
+            // Success
+            request.paymentAmount = 0;
+            emit PaymentTransferred(rideId, request.selectedDriver);
+        } catch Error(string memory reason) {
+            // This catches revert/require with a reason
+            revert(string(abi.encodePacked("Payment failed: ", reason)));
+        } catch {
+            // This catches all other errors
+            revert("Payment failed with an unknown error");
+        }
+        
         request.paymentAmount = 0;
-
         emit PaymentTransferred(rideId, request.selectedDriver);
     }
 
     function sendReview(uint256 rideId, string calldata feedback) external onlyAllowedCaller {
         RideRequest storage request = rideRequests[rideId];
         
-        require(msg.sender == request.rider, "Only rider can review");
+        // require(msg.sender == request.rider, "Only rider can review");
         require(keccak256(abi.encodePacked(request.status)) == keccak256(abi.encodePacked("arrived")), "Ride must be departed to confirm departure");
         
         request.status = "completed";

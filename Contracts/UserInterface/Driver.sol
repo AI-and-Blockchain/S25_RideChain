@@ -32,7 +32,7 @@ interface IRideRequestContract {
     function confirmDeparture(uint256 rideId) external;
     function confirmArrival(uint256 rideId) external;
     function sendReview(uint256 rideId, string calldata feedback) external;
-    function submitRideProposal(uint256 rideId, uint256 price) external;
+    function submitRideProposal(address driver, uint256 rideId, uint256 price) external;
     function getRideProposals(uint256 rideId) external view returns (RideProposal[] memory);
 }
 
@@ -83,11 +83,13 @@ contract DriverContract {
     }
 
     function proposeRidePrice(uint256 ride_id, uint256 price) external {
+        require(registration.isDriverRegistered(msg.sender), "Driver not registered");
         emit RideProposalSubmitted(msg.sender, price, ride_id);
-        request.submitRideProposal(ride_id, price);
+        request.submitRideProposal(msg.sender, ride_id, price);
     }
 
     function withdrawRequest() external onlyRegisteredDriver {
+        require(registration.isDriverRegistered(msg.sender), "Driver not registered");
         registration.withdrawCollateral(msg.sender);
         emit FundsWithdrawn(msg.sender);
     }

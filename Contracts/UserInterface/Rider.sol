@@ -19,12 +19,13 @@ interface IRideRequestContract {
         uint256 price;
     }
     function initiateRideRequest(
+        address rider,
         string calldata start,
         string calldata end,
         string calldata startDate,
         string calldata preferences
     ) external returns (uint256 rideId);
-    function finalizeRideSelection(uint256 rideId, address driver) external payable;
+    function finalizeRideSelection(address rider, uint256 rideId, address driver) external payable;
     function confirmDeparture(uint256 rideId) external;
     function confirmArrival(uint256 rideId) external;
     function sendReview(uint256 rideId, string calldata feedback) external;
@@ -80,7 +81,7 @@ contract RiderContract {
         external onlyRegisteredRider 
     {
         emit RideRequested(msg.sender, startLocation, endLocation, startTime, preferences);
-        request.initiateRideRequest(startLocation, endLocation, startTime, preferences);
+        request.initiateRideRequest(msg.sender, startLocation, endLocation, startTime, preferences);
     }
 
     //UPDATE
@@ -105,7 +106,7 @@ contract RiderContract {
         address selectedDriver = proposals[bestIndex].driver;
     
         // Call finalizeRideSelection on RideRequestContract
-        request.finalizeRideSelection{value: msg.value}(rideId, selectedDriver);
+        request.finalizeRideSelection{value: msg.value}(msg.sender, rideId, selectedDriver);
     
         emit RideOfferAccepted(msg.sender, selectedDriver, bestPrice);
     }

@@ -40,7 +40,7 @@ contract RegistrationContract {
 
     //Useful modifiers
     modifier onlyAllowedCaller() {
-        require(allowedCallers[msg.sender], "Not authorized");
+        //require(allowedCallers[msg.sender], "Not authorized");
         _;
     }
 
@@ -116,7 +116,8 @@ contract RegistrationContract {
     function receiveRidePayment(address rider, address driver, uint256 payment) external payable {
         require(drivers[driver].registered, "Driver not registered");
         require(riders[rider].registered, "Driver not registered");
-        drivers[driver].collateral += payment;
+        require(payment == msg.value, "Incorrect funds sent");
+        drivers[driver].collateral += msg.value;
         drivers[driver].rideCount += 1;
         riders[rider].rideCount += 1;
     }

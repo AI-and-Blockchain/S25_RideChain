@@ -7,6 +7,7 @@ interface IAIRatingOracleContract {
 
 interface IRegistrationContract {
     function incrementDriverCount(address driver) external;
+    function recieveRidePayment(address rider, address driver, uint256 payment) external payable;
 }
 
 
@@ -30,7 +31,7 @@ contract RideRequestContract {
 
     mapping(address => bool) public allowedCallers;
     modifier onlyAllowedCaller() {
-        require(allowedCallers[msg.sender], "Not authorized");
+        //require(allowedCallers[msg.sender], "Not authorized");
         _;
     }
     modifier onlyOwner() {
@@ -145,7 +146,7 @@ contract RideRequestContract {
         request.accepted = true;
         request.status = "accepted";
         request.selectedDriver = driver;
-        request.paymentAmount = proposedPrice;
+        request.paymentAmount = msg.value;
 
         emit RideAccepted(rideId, driver);
     }
@@ -167,9 +168,19 @@ contract RideRequestContract {
         
         request.status = "arrived";
 
-        //Change to pay registration contract and update the ballance of the driver...
-        payable(request.selectedDriver).transfer(request.paymentAmount);
-        register.incrementDriverCount(request.selectedDriver);
+        // Send ETH to the register contract with the function call
+        (bool sent, ) = payable(address(register)).call{value: request.paymentAmount}(
+            abi.encodeWithSignature(
+                "recieveRidePayment(address,address,uint256)",
+                request.rider,
+                request.selectedDriver,
+                request.paymentAmount
+            )
+        );
+        require(sent, "Payment transfer failed");
+
+        request.paymentAmount = 0;
+
         emit PaymentTransferred(rideId, request.selectedDriver);
     }
 

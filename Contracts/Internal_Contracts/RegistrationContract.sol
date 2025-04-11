@@ -112,6 +112,15 @@ contract RegistrationContract {
         return drivers[driver];
     }
 
+    //Receives payment and increments collatoral
+    function receiveRidePayment(address rider, address driver, uint256 payment) external payable {
+        require(drivers[driver].registered, "Driver not registered");
+        require(riders[rider].registered, "Driver not registered");
+        drivers[driver].collateral += payment;
+        drivers[driver].rideCount += 1;
+        riders[rider].rideCount += 1;
+    }
+
     //Used to get a riders data if they are registered
     function getRiderData(address rider) external view returns (Rider memory) {
         require(riders[rider].registered, "Rider not registered");

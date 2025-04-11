@@ -167,6 +167,7 @@ contract RideRequestContract {
         
         request.status = "arrived";
 
+        //Change to pay registration contract and update the ballance of the driver...
         payable(request.selectedDriver).transfer(request.paymentAmount);
         register.incrementDriverCount(request.selectedDriver);
         emit PaymentTransferred(rideId, request.selectedDriver);

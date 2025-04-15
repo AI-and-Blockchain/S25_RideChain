@@ -7,6 +7,8 @@ The system centers around three core innovations:
 - A collateral based reputation system to incentivize drivers to behave correctly if they want to withdraw funds 
 - AI-enhanced reputation scoring based on real ride data and user reviews and feedback.
 
+Diagrams can be found in the Diagrams folder to see sequence and component diagrams. 
+
 ---
 
 ## Demo/Stakeholders

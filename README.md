@@ -8,6 +8,8 @@ The system centers around three core innovations:
 - AI-enhanced reputation scoring based on real ride data and user reviews and feedback.
 
 Diagrams can be found in the Diagrams folder to see sequence and component diagrams. 
+[(https://github.com/AI-and-Blockchain/S25_RideChain/blob/main/Diagrams/ComponentDiagram.png)]
+[(https://github.com/AI-and-Blockchain/S25_RideChain/blob/main/Diagrams/Sequence.png)]
 
 ---
 

@@ -34,6 +34,7 @@ contract RegistrationContract {
     mapping(address => bool) public allowedCallers;
 
     //Events:
+    event DriverScoreUpdated(address indexed driver, uint256 newScore);
     event DriverRegistered(address indexed driver, uint256 collateral);
     event RiderRegistered(address indexed rider);
     event CollateralWithdrawn(address indexed driver, uint256 amount);
@@ -89,7 +90,7 @@ contract RegistrationContract {
             driverAddress: driver,
             collateral: msg.value,
             rating: 5,
-            rideCount: 10,
+            rideCount: 0,
             registered: true
         });
         emit DriverRegistered(driver, msg.value);
@@ -139,16 +140,18 @@ contract RegistrationContract {
     }
 
     //Update a drivers rating to a new rating
-    function updateDriverScore(address driver, uint256 newRating) external onlyAllowedCaller {
-        Driver storage d = drivers[driver];
-        require(d.registered, "Driver not registered");
-        d.rating = (d.rating * d.rideCount + newRating) / (d.rideCount + 1);
+    function updateDriverScore(address driver, uint256 newRating) external {
+        //Driver storage d = drivers[driver];
+        require(drivers[driver].registered, "Driver not registered");
+        // Simple average calculation
+        drivers[driver].rating = ((drivers[driver].rideCount) * drivers[driver].rating + newRating) / (drivers[driver].rideCount + 1);
+        emit DriverScoreUpdated(driver, newRating);
     }
 
     function withdrawCollateral(address driver) external onlyAllowedCaller {
         Driver storage d = drivers[driver];
         require(d.rating > 3, "Rating too low");
-        require(d.rideCount >= 10, "Not enough rides");
+        require(d.rideCount >= 1, "Not enough rides");
 
         uint256 amount = d.collateral;
         d.collateral = 0;

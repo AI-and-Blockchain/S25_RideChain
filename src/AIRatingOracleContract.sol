@@ -17,6 +17,9 @@ contract AIRatingOracleContract {
     address public owner;
     IDriverRegistration public registration;
 
+    event OracleResponseReceived(address indexed driver, uint256 newScore);
+    event DriverScoreUpdateRequested(address indexed driver, string feedback);
+
     mapping(address => bool) public allowedCallers;
     modifier onlyAllowedCaller() {
         //require(allowedCallers[msg.sender], "Not authorized");
@@ -48,8 +51,14 @@ contract AIRatingOracleContract {
         owner = newOwner;
     }
 
+    function requestDriverScoreUpdate(address driver, string calldata feedback) external onlyAllowedCaller {
+        // Emit an event to notify the mobile oracle about the score update request
+        emit DriverScoreUpdateRequested(driver, feedback);
+    }
+
     //Updates the driver score in the registration contract
-    function updateDriverScore(address driver, uint256 newScore) external onlyAllowedCaller {
+    function updateDriverScore(address driver, uint256 newScore) external {
+        emit OracleResponseReceived(driver, newScore);  // Emit an event to notify the mobile oracle about the score update
         registration.updateDriverScore(driver, newScore);
     }
 

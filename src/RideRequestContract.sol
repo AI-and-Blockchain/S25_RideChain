@@ -2,7 +2,7 @@
 pragma solidity ^0.8.19;
 
 interface IAIRatingOracleContract {
-    function updateDriverScore(address driver, uint256 newScore) external;
+    function requestDriverScoreUpdate(address driver, string calldata feedback) external;
 }
 
 interface IRegistrationContract {
@@ -203,8 +203,8 @@ contract RideRequestContract {
         // AIRC -> AI -> AIRC -> then update score for driver
 
         //Simulate AI Oracle
-        aiRatingOracle.updateDriverScore(request.selectedDriver, 5);
-
+        //aiRatingOracle.updateDriverScore(request.selectedDriver, 5);
+        aiRatingOracle.requestDriverScoreUpdate(request.selectedDriver, feedback);
     }
 
 }

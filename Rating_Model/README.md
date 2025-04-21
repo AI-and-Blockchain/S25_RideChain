@@ -55,28 +55,27 @@ git clone https://github.com/your-username/driver-rating-model.git
 cd driver-rating-model
 pip install -r requirements.txt
 python -m nltk.downloader vader_lexicon
-Dataset Setup
+### Dataset Setup
 This project uses the argilla/uber-reviews dataset from HuggingFace, which contains over 2,300 annotated rider reviews with corresponding star ratings.
 
-Download the dataset:
+1. Download the dataset:
 bash# Using the HuggingFace datasets library
 python -c "from datasets import load_dataset; dataset = load_dataset('argilla/uber-reviews'); dataset['train'].to_csv('Data/converted_train.csv')"
 Alternatively, you can download it manually from: https://huggingface.co/datasets/argilla/uber-reviews
-Ensure the CSV file is placed in the Data/ directory.
+2. Ensure the CSV file is placed in the Data/ directory.
 
-Training the Model
+### Training the Model
 To train the model with default parameters:
-bashpython training_model.py
+python training_model.py
 This will:
+- Load and preprocess the review dataset
+- Extract text features using bag-of-words
+- Calculate sentiment scores
+- Train a logistic regression classifier
+- Apply sentiment threshold rules
+- Save the model to Model/driver_rating_model.pkl
 
-Load and preprocess the review dataset
-Extract text features using bag-of-words
-Calculate sentiment scores
-Train a logistic regression classifier
-Apply sentiment threshold rules
-Save the model to Model/driver_rating_model.pkl
-
-Using the Model
+### Using the Model
 To score a new review:
 pythonfrom single_review_score import get_review_score
 
@@ -85,18 +84,17 @@ review = "The driver was friendly and the car was clean."
 rating = get_review_score(review)
 print(f"Predicted Rating: {rating}")
 
-Model Architecture
+### Model Architecture
 The rating system uses a hybrid approach combining:
 
-Text Preprocessing: Converts text to lowercase and removes special characters
-Feature Extraction: Uses CountVectorizer with n-gram features (1-2)
-Sentiment Analysis: VADER SentimentIntensityAnalyzer to capture emotional tone
-Classification: Logistic regression with class balancing
-Rule-Based Overrides:
-
-Very neutral reviews (sentiment -0.1 to 0.1) → Rating 3
-Very positive reviews (sentiment > 0.7) → Minimum rating 4
-Very negative reviews (sentiment < -0.7) → Maximum rating 2
+1. Text Preprocessing: Converts text to lowercase and removes special characters
+2. Feature Extraction: Uses CountVectorizer with n-gram features (1-2)
+3. Sentiment Analysis: VADER SentimentIntensityAnalyzer to capture emotional tone
+4. Classification: Logistic regression with class balancing
+5. Rule-Based Overrides:
+  - Very neutral reviews (sentiment -0.1 to 0.1) → Rating 3
+  - Very positive reviews (sentiment > 0.7) → Minimum rating 4
+  - Very negative reviews (sentiment < -0.7) → Maximum rating 2
 
 This combined approach ensures more accurate and consistent ratings than relying on machine learning or sentiment analysis alone.
 

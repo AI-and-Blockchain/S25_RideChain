@@ -28,22 +28,6 @@ This system builds a natural language processing pipeline that converts textual 
 - **ML Classification**: Employs a logistic regression model to predict star ratings
 - **Rule-Based Overrides**: Applies sentiment thresholds to handle edge cases
 
----
-
-## Project Structure
-Rating_Model/
-├── Data/
-│   └── converted_train.csv  # Training dataset with reviews and ratings
-├── Model/
-│   └── driver_rating_model.pkl  # Serialized model file
-├── README.md
-├── config.yaml  # Configuration settings
-├── requirements.txt
-├── single_review_score.py  # Inference script for scoring individual reviews
-└── training_model.py  # Model training pipeline
-
----
-
 ## How To Use
 
 ### Prerequisites
@@ -79,7 +63,7 @@ This will:
 To score a new review:
 pythonfrom single_review_score import get_review_score
 
-# Score a single review
+### Score a single review
 review = "The driver was friendly and the car was clean."
 rating = get_review_score(review)
 print(f"Predicted Rating: {rating}")
